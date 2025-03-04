@@ -19,11 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_result($id, $db_username, $db_password);
             $stmt->fetch();
 
-            // Validate plain-text password (no hashing)
-            if ($password === $db_password) {
+            // Verify hashed password
+            if (password_verify($password, $db_password)) {
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $db_username;
-                
+                $_SESSION['admin_logged_in'] = true;
+
                 header("Location: dashboard.php"); // Redirect to the admin panel
                 exit();
             } else {
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "❌ Please enter both username and password!";
     }
 }
-?>  
+?>
 
 <!DOCTYPE html>
 <html lang="en">

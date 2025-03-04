@@ -7,21 +7,36 @@ document.addEventListener("DOMContentLoaded", function () {
         let filter = searchInput.value.toLowerCase();
         tableRows.forEach(row => {
             let name = row.cells[1].innerText.toLowerCase();
-            if (name.includes(filter)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+            row.style.display = name.includes(filter) ? "" : "none";
         });
     });
+    
 });
 
-// Edit Stylist
-function editStylist(stylistId) {
-    window.location.href = `edit_stylist.php?id=${stylistId}`;
+// Open and Close Add Modal
+function openAddModal() {
+    document.getElementById("addModal").style.display = "flex";
 }
 
-// Delete Stylist
+function closeAddModal() {
+    document.getElementById("addModal").style.display = "none";
+}
+
+// Open and Close Edit Modal
+function openEditModal(id, name, expertise, phone, email) {
+    document.getElementById("edit_id").value = id;
+    document.getElementById("edit_name").value = name;
+    document.getElementById("edit_expertise").value = expertise;
+    document.getElementById("edit_phone").value = phone;
+    document.getElementById("edit_email").value = email;
+    document.getElementById("editModal").style.display = "flex";
+}
+
+function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+}
+
+// Delete Stylist Confirmation
 function deleteStylist(stylistId) {
     if (confirm("Are you sure you want to delete this stylist?")) {
         window.location.href = `delete_stylist.php?id=${stylistId}`;

@@ -1,45 +1,75 @@
 <?php
+session_start();
 include 'config.php'; // Database connection
+
+// Check if the admin is logged in
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    // Redirect to login page
+    header("Location: login.php");
+    exit();
+}
 
 // Initialize counts
 $userCount = $stylistCount = $appointmentCount = 0;
 $topStylists = [];
 $upcomingAppointments = [];
 
-// Fetch total users
-$userQuery = $conn->query("SELECT COUNT(*) AS total FROM users");
-if ($userQuery) {
-    $userCount = $userQuery->fetch_assoc()['total'];
+try {
+    // Fetch total users
+    $userQuery = $conn->query("SELECT COUNT(*) AS total FROM users");
+    if ($userQuery && $userQuery->num_rows > 0) {
+        $userCount = $userQuery->fetch_assoc()['total'];
+    }
+
+    // Fetch total stylists
+    $stylistQuery = $conn->query("SELECT COUNT(*) AS total FROM stylists");
+    if ($stylistQuery && $stylistQuery->num_rows > 0) {
+        $stylistCount = $stylistQuery->fetch_assoc()['total'];
+    }
+
+    // Fetch total appointments
+    $appointmentQuery = $conn->query("SELECT COUNT(*) AS total FROM appointments");
+    if ($appointmentQuery && $appointmentQuery->num_rows > 0) {
+        $appointmentCount = $appointmentQuery->fetch_assoc()['total'];
+    }
+
+    // Fetch top-rated stylists
+    $topStylistQuery = $conn->query("SELECT stylist_name, rating FROM stylists ORDER BY rating DESC LIMIT 3");
+    if ($topStylistQuery && $topStylistQuery->num_rows > 0) {
+        while ($row = $topStylistQuery->fetch_assoc()) {
+            $topStylists[] = $row;
+        }
+    }
+
+    // Fetch upcoming appointments
+    $appointments_query = "
+        SELECT 
+            a.id, 
+            u.customer_name AS customer_name, 
+            s.stylist_name AS stylist_name, 
+            a.appointment_date, 
+            a.service, 
+            a.status
+        FROM appointments a
+        JOIN users u ON a.customer_id = u.id
+        JOIN stylists s ON a.stylist_id = s.id
+        ORDER BY a.appointment_date ASC 
+        LIMIT 3
+    ";
+
+    $appointments = $conn->query($appointments_query);
+    if ($appointments && $appointments->num_rows > 0) {
+        while ($row = $appointments->fetch_assoc()) {
+            $upcomingAppointments[] = $row;
+        }
+    }
+
+} catch (Exception $e) {
+    error_log("Error fetching data: " . $e->getMessage());
 }
 
-// Fetch total stylists
-$stylistQuery = $conn->query("SELECT COUNT(*) AS total FROM stylists");
-if ($stylistQuery) {
-    $stylistCount = $stylistQuery->fetch_assoc()['total'];
-}
-
-// Fetch total appointments
-$appointmentQuery = $conn->query("SELECT COUNT(*) AS total FROM appointments");
-if ($appointmentQuery) {
-    $appointmentCount = $appointmentQuery->fetch_assoc()['total'];
-}
-
-// Fetch top-rated stylists
-$topStylistQuery = $conn->query("SELECT stylist_name, rating FROM stylists ORDER BY rating DESC LIMIT 3");
-while ($row = $topStylistQuery->fetch_assoc()) {
-    $topStylists[] = $row;
-}
-
-// Fetch upcoming appointments
-$appointments_query = "SELECT a.id, u.customer_name AS customer_name, s.stylist_name AS stylist_name, 
-                              a.appointment_date, a.service, a.status
-                       FROM appointments a
-                       JOIN users u ON a.customer_id = u.id
-                       JOIN stylists s ON a.stylist_id = s.id
-                       ORDER BY a.appointment_date ASC LIMIT 3";
-
-$appointments = $conn->query($appointments_query);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
