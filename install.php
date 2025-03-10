@@ -39,24 +39,23 @@
     }
 
     // Create Appointments Table (Using Foreign Keys)
-    $appointmentsTable = "CREATE TABLE IF NOT EXISTS appointments (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        customer_id INT NOT NULL,
-        stylist_id INT NOT NULL,
-        appointment_date DATE NOT NULL,
-        appointment_time TIME NOT NULL,
-        service VARCHAR(255) NOT NULL,  -- Added service column
-        status ENUM('Pending', 'Completed', 'Cancelled') DEFAULT 'Pending',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (stylist_id) REFERENCES stylists(id) ON DELETE CASCADE
-    )";
-    if ($conn->query($appointmentsTable) === TRUE) {
-        echo "✅ Appointments table created successfully.<br>";
-    } else {
-        echo "❌ Error creating appointments table: " . $conn->error . "<br>";
-    }
+  // Create Appointments Table (Fixed Version)
+$appointmentsTable = "CREATE TABLE IF NOT EXISTS appointments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(255) NOT NULL,
+    stylist_name VARCHAR(255) NOT NULL,
+    appointment_date DATE NOT NULL,
+    appointment_time TIME NOT NULL,
+    service VARCHAR(255) NOT NULL,
+    status ENUM('Pending', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)";
 
+if ($conn->query($appointmentsTable) === TRUE) {
+    echo "✅ Appointments table verified/created successfully.<br>";
+} else {
+    echo "❌ Error creating appointments table: " . $conn->error . "<br>";
+}
     // Create Admin Table
     $adminTable = "CREATE TABLE IF NOT EXISTS admin (s
         id INT AUTO_INCREMENT PRIMARY KEY,

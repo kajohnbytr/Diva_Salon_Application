@@ -1,61 +1,82 @@
-body {
-    display: flex;
-    justify-content: flex-start; /* Aligns content to the left */
-    align-items: flex-start; /* Aligns content to the top */
-    height: 100vh;
+  /* General Styles */
+  body {
+    font-family: Arial, sans-serif;
     margin: 0;
-    padding-left: 0; /* Ensure no extra padding */
-    width: 100%;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-.container {
-    width: 100%; /* Ensures it takes full width */
-    max-width: 100%; /* Prevents unnecessary constraints */
+.dashboard-container {
+    flex: 1;
+    margin: 20px 0 20px 270px; /* Reduce top margin */
+    background: white;
     padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+h1 {
+    text-align: center;
+}
+
+/* Search Box */
+.search-box {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Table Styles */
 table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    margin-top: 20px;
 }
 
-
 th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
 }
 
 th {
-    background-color: #007bff;
+    background-color: #d4af37;
     color: white;
 }
 
-tr:hover {
-    background-color: #f1f1f1;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.edit-btn, .delete-btn {
-    padding: 8px 12px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.edit-btn {
-    background-color: #28a745;
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px; /* Adjust width as needed */
+    height: 100vh; /* Full height */
+    background-color: #333;
     color: white;
+    padding-top: 20px;
+    overflow-y: auto; /* Prevent cutting off content */
 }
 
-.delete-btn {
-    background-color: #dc3545;
+.sidebar a {
+    display: block;
+    padding: 10px 20px;
     color: white;
+    text-decoration: none;
 }
 
-.delete-btn:hover, .edit-btn:hover {
-    opacity: 0.8;
+.sidebar a:hover {
+    background-color: #555;
 }

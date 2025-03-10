@@ -33,12 +33,33 @@ while ($row = mysqli_fetch_assoc($topStylistQuery)) {
 }
 
 // Fetch upcoming appointments
-$appointments_query = "SELECT a.id, u.[correct_column] AS customer_name, s.stylist_name AS stylist_name, 
-                              a.appointment_date, a.service, a.status
-                       FROM appointments a
-                       JOIN users u ON a.customer_id = u.id
-                       JOIN stylists s ON a.stylist_id = s.id
-                       ORDER BY a.appointment_date ASC LIMIT 3";
+$appointments_query = "
+    SELECT 
+        a.id, 
+        u.customer_name AS customer_name, 
+        s.stylist_name AS stylist_name, 
+        a.appointment_date, 
+        a.appointment_time,  -- Include appointment_time if needed
+        a.service, 
+        a.status
+    FROM appointments a
+    JOIN users u ON a.customer_id = u.id
+    JOIN stylists s ON a.stylist_id = s.id
+    ORDER BY a.appointment_date ASC 
+    LIMIT 3
+";
+
+$appointments = $conn->query($appointments_query);
+$upcomingAppointments = []; // Initialize the array to avoid undefined variable notice
+
+if ($appointments && $appointments->num_rows > 0) {
+    while ($row = $appointments->fetch_assoc()) {
+        $upcomingAppointments[] = $row;
+    }
+} else {
+    // Handle the case where there are no upcoming appointments
+    echo "No upcoming appointments found.";
+}
 ?>
 
 <!DOCTYPE html>
@@ -181,26 +202,6 @@ $appointments_query = "SELECT a.id, u.[correct_column] AS customer_name, s.styli
             </table>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let ctx = document.getElementById("chart").getContext("2d");
-            new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: ["Users", "Stylists", "Appointments"],
-                    datasets: [{
-                        label: "Count",
-                        data: [<?php echo $userCount; ?>, <?php echo $stylistCount; ?>, <?php echo $appointmentCount; ?>],
-                        backgroundColor: ["#007bff", "#28a745", "#dc3545"]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        });
-    </script>
 </body>
 </html>
 
