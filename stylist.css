@@ -3,23 +3,83 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    display: flex;
+    height: 100vh; /* Full height of the viewport */
+    overflow: hidden; /* Prevent scrolling on body */
+}
+
+.sidebar {
+    width: 270px; /* Fixed width for sidebar */
+    background-color: #343a40; /* Example sidebar color */
+    color: white;
+    position: fixed; /* Fix the sidebar */
+    height: 100%; /* Full height */
+    padding: 20px; /* Padding for sidebar content */
+}
+
+.main-content {
+    margin-left: 270px; /* Space for sidebar */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    min-height: 100vh; /* Ensure full height */
 }
 
 .dashboard-container {
-    flex: 1;
-    margin: 20px 0 20px 270px; /* Reduce top margin */
     background: white;
-    color: black;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    flex: 1; /* Take up remaining space */
+    width: 100%; /* Ensure full width */
+    height: 100%; /* Ensure full height */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Allow scrolling if content overflows */
 }
-
 
 h1 {
     text-align: center;
 }
 
+/* Search Box */
+.search-box {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Appointments Section */
+.appointments {
+    margin-top: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    flex-grow: 1; /* Allow this section to grow */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background: #d4af37;
+    color: white;
+}
+
+/* Button Styling */
 .add-btn, .edit-btn, .delete-btn {
     padding: 8px 12px;
     border: none;
@@ -30,6 +90,10 @@ h1 {
 .add-btn {
     background-color: #28a745;
     color: white;
+    padding: 5px 10px; /* Smaller padding for a smaller button */
+    font-size: 14px; /* Adjust font size if needed */
+    margin: 10px 0; /* Add some margin for spacing */
+    align-self: flex-start; /* Align to the left */
 }
 
 .edit-btn {
@@ -42,18 +106,6 @@ h1 {
     color: white;
 }
 
-.search-box {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-th {
-    background-color: #d4af37;
-    color: white;
-}
 /* Animations */
 @keyframes fadeIn {
     from {
@@ -63,5 +115,44 @@ th {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%; /* Make it responsive */
+    max-width: 600px; /* Limit the maximum width */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0; /* Remove sidebar space on smaller screens */
+        width: 100%;
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    .dashboard-container {
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    .modal-content {
+        width: 95%; /* Make modal content more responsive */
     }
 }

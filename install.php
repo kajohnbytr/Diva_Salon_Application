@@ -58,9 +58,13 @@ if ($conn->query($appointmentsTable) === TRUE) {
 }
     // Create Admin Table
     $adminTable = "CREATE TABLE IF NOT EXISTS admin (s
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(50) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL  
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `position` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `profile_image` longblob DEFAULT NULL
+   ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
     )";
     if ($conn->query($adminTable) === TRUE) {
         echo "✅ Admin table created successfully.<br>";

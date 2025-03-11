@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_id'])) {
     <title>Admin Dashboard - Stylists</title>
     <link rel="stylesheet" href="stylist.css">
     <link rel="stylesheet" href="modal.css">
+    <?php include 'sidebar.php'; ?>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("addModal").style.display = "none";
@@ -71,7 +72,6 @@ function closeAddModal() {
 }
 
 function openEditModal(id, name, expertise, phone, email) {
-    document.getElementById("edit_id").value = id;
     document.getElementById("edit_name").value = name;
     document.getElementById("edit_expertise").value = expertise;
     document.getElementById("edit_phone").value = phone;
@@ -104,7 +104,6 @@ window.onclick = function(event) {
 </script>
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
     <div class="dashboard-container">
         <h1>Stylist Management</h1>
         
@@ -169,11 +168,15 @@ window.onclick = function(event) {
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
             <center><h2>Edit Stylist</h2></center>
-            <form method="POST" action="edit_stylist.php">
+            <form method="POST" action="edit_stylist.php"> 
                 <input type="hidden" name="id" id="edit_id">
+                <label for="stylist_name">Full Name:</label>
                 <input type="text" name="stylist_name" id="edit_name" required>
+                <label for="expertise">Expertise:</label>
                 <input type="text" name="expertise" id="edit_expertise" required>
+                <label for="phone">Phone:</label>
                 <input type="text" name="phone" id="edit_phone" required>
+                <label for="email">Email:</label>
                 <input type="email" name="email" id="edit_email" required>
                 <button type="submit" name="edit_stylist">Update</button>
             </form>

@@ -1,3 +1,44 @@
+<?php
+// Ensure session is started only if not already active
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if admin is logged in
+$admin_username = $_SESSION['admin_username'] ?? '';
+
+// Include database connection
+include 'config.php';
+
+// Fetch admin details from the database
+$query = "SELECT username, position, profile_image FROM admin WHERE username = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $admin_username);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+// Initialize variables to prevent undefined errors
+$username = "";
+$position = "";
+$profileImage = "";
+
+// Fetch data if found
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $username = htmlspecialchars($row['username'], ENT_QUOTES, 'UTF-8');
+    $position = htmlspecialchars($row['position'], ENT_QUOTES, 'UTF-8');
+
+    // Handle profile image
+    if (!empty($row['profile_image'])) {
+        $profileImage = "data:image/jpeg;base64," . base64_encode($row['profile_image']);
+    }
+}
+
+// Close the statement and database connection
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,6 +86,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
+            object-fit: cover;
         }
 
         nav ul {
@@ -60,6 +102,13 @@
             margin: 5px 0;
             text-align: center;
             border-radius: 5px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: black;
+            display: block;
+            width: 100%;
         }
 
         .logout {
@@ -85,19 +134,25 @@
         <h2>DIVA</h2>
         <p>Achieve Your Style</p>
         <div class="profile">
-            <img src="profile.jpg" alt="Profile">
-            <h3>Alisha B. Garcia</h3>
-            <p>Manager</p>
+            <?php if (!empty($profileImage)): ?>
+                <img src="<?php echo $profileImage; ?>" alt="Profile">
+            <?php endif; ?>
+            <?php if (!empty($username)): ?>
+                <h3><?php echo $username; ?></h3>
+            <?php endif; ?>
+            <?php if (!empty($position)): ?>
+                <p><?php echo $position; ?></p>
+            <?php endif; ?>
         </div>
         <nav>
             <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="appointments.php">Appointments</a></li>
-            <li><a href="stylist.php">Stylists</a></li>
-            <li><a href="users.php">Users</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><a href="appointments.php">Appointments</a></li>
+                <li><a href="stylist.php">Stylists</a></li>
+                <li><a href="users.php">Users</a></li>
             </ul>
         </nav>
-        <button class="logout" onclick="logout()">Log out</button>
+        <button id="logout-btn" class="logout">Log out</button>
         <script src="sidebar.js"></script>
     </div>
 </body>

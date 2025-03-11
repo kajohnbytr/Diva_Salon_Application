@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_id'])) {
     <title>Admin Dashboard - Users</title>
     <link rel="stylesheet" href="users.css">
     <link rel="stylesheet" href="modal.css">
+    <?php include 'sidebar.php'; ?>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("addModal").style.display = "none";
@@ -102,7 +103,6 @@ window.onclick = function(event) {
 </script>
 </head>
 <body>
-    <?php include 'sidebar.php'; ?>
     <div class="dashboard-container">
         <h1>User Management</h1>
         

@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = 'logout.php';
         }
     }
-    
-    const logoutButton = document.getElementById('logout-btn');
+
+    const logoutButton = document.querySelector('.logout'); // Fix: Select by class instead of ID
     if (logoutButton) {
         logoutButton.addEventListener('click', function (e) {
             e.preventDefault();
