@@ -5,7 +5,7 @@ header("Content-Type: application/json");
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "diva_salon";
+$database = "backend_diva";
 
 $conn = new mysqli($servername, $username, $password, $database);
 

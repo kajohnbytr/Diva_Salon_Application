@@ -6,8 +6,7 @@ include 'config.php'; // Database connection
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: login.php");
     exit();
-}
-
+}	
 // Initialize counts
 $userCount = $stylistCount = $appointmentCount = 0;
 $appointmentsPerMonth = [];
@@ -29,7 +28,17 @@ $appointmentQuery = $conn->query("SELECT COUNT(*) AS total FROM appointments");
 if ($appointmentQuery && $appointmentQuery->num_rows > 0) {
     $appointmentCount = $appointmentQuery->fetch_assoc()['total'];
 }
+// Fetch appointments per day
+$dayQuery = $conn->query("SELECT DATE_FORMAT(appointment_date, '%Y-%m-%d') AS day, COUNT(*) AS total FROM appointments GROUP BY day");
+while ($row = $dayQuery->fetch_assoc()) {
+    $appointmentsPerDay[$row['day']] = $row['total'];
+}
 
+// Fetch appointments per week
+$weekQuery = $conn->query("SELECT YEARWEEK(appointment_date, 1) AS week, COUNT(*) AS total FROM appointments GROUP BY week");
+while ($row = $weekQuery->fetch_assoc()) {
+    $appointmentsPerWeek[$row['week']] = $row['total'];
+}
 // Fetch appointments per month
 $monthQuery = $conn->query("SELECT DATE_FORMAT(appointment_date, '%Y-%m') AS month, COUNT(*) AS total FROM appointments GROUP BY month");
 while ($row = $monthQuery->fetch_assoc()) {
@@ -38,13 +47,23 @@ while ($row = $monthQuery->fetch_assoc()) {
 
 // Fetch top-rated stylists
 $topStylists = [];
-$topStylistQuery = $conn->query("SELECT stylist_name, rating FROM stylists ORDER BY rating DESC LIMIT 3");
+$topStylistQuery = $conn->query("SELECT stylist_name, rating FROM stylists ORDER BY rating DESC LIMIT 5");
 while ($row = $topStylistQuery->fetch_assoc()) {
     $topStylists[] = $row;
 }
 
-// Fetch upcoming appointments
-$appointments = $conn->query("SELECT customer_name, stylist_name, appointment_date, service, status FROM appointments");
+$appointments = $conn->query("
+    SELECT 
+        users.customer_name, 
+        stylists.stylist_name, 
+        appointments.appointment_date, 
+        appointments.service, 
+        appointments.status 
+    FROM appointments
+    JOIN users ON appointments.customer_id = users.id
+    JOIN stylists ON appointments.stylist_id = stylists.id
+");
+
 
 ?>
 <!DOCTYPE html>
@@ -58,7 +77,7 @@ $appointments = $conn->query("SELECT customer_name, stylist_name, appointment_da
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-
+<?php include 'notification.php'; ?>
 <?php include 'sidebar.php'; ?>
 
 <div class="dashboard-container">
@@ -116,19 +135,36 @@ $appointments = $conn->query("SELECT customer_name, stylist_name, appointment_da
 </div>
 
 <script>
-    const chartLabels = <?= json_encode(array_keys($appointmentsPerMonth)); ?>;
+   const chartLabels = <?= json_encode(array_keys($appointmentsPerMonth)); ?>;
     const chartData = <?= json_encode(array_values($appointmentsPerMonth)); ?>;
+    const dailyLabels = <?= json_encode(array_keys($appointmentsPerDay)); ?>;
+    const dailyData = <?= json_encode(array_values($appointmentsPerDay)); ?>;
+    const weeklyLabels = <?= json_encode(array_keys($appointmentsPerWeek)); ?>;
+    const weeklyData = <?= json_encode(array_values($appointmentsPerWeek)); ?>;
 
     const ctx = document.getElementById('chart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',
         data: {
             labels: chartLabels,
-            datasets: [{
-                label: 'Appointments Per Month',
-                data: chartData,
-                backgroundColor: 'gold'
-            }]
+            datasets: [
+              
+                {
+                    label: 'Appointments Per Day',
+                    data: dailyData,
+                    backgroundColor: 'blue'
+                },
+                {
+                    label: 'Appointments Per Week',
+                    data: weeklyData,
+                    backgroundColor: 'green'
+                },
+                {
+                    label: 'Appointments Per Month',
+                    data: chartData,
+                    backgroundColor: 'gold'
+                }
+            ]
         },
         options: {
             responsive: true,

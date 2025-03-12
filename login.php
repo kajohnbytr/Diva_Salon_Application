@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = trim($_POST['password']);
 
     if (!empty($username) && !empty($password)) {
-        // Fetch admin credentials from the database
+        // Prepare statement to fetch admin credentials
         $stmt = $conn->prepare("SELECT id, username, password FROM admin WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -19,7 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_result($id, $db_username, $db_password);
             $stmt->fetch();
 
-            // Verify hashed password
+            // Debugging: Check fetched password hash
+            // echo "DB Password: " . $db_password;
+
+            // Verify password hash
             if (password_verify($password, $db_password)) {
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $db_username;
@@ -66,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php if (!empty($error)): ?>
             <center><p style="color: red; font-weight: bold;"><?php echo $error; ?></p></center>
             <?php endif; ?>
-
 
             <input type="submit" value="Log in">
         </form>

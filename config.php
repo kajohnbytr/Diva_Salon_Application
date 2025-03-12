@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "diva_salon";
+$database = "backend_diva";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);

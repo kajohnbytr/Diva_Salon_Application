@@ -1,56 +1,60 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const addModal = document.getElementById("addModal");
+    const editModal = document.getElementById("editModal");
     const searchInput = document.getElementById("searchStylist");
     const tableRows = document.querySelectorAll("tbody tr");
 
-    // Search filter
-    searchInput.addEventListener("keyup", function () {
-        let filter = searchInput.value.toLowerCase();
-        tableRows.forEach(row => {
-            let name = row.cells[1].innerText.toLowerCase();
-            row.style.display = name.includes(filter) ? "" : "none";
+    if (addModal) addModal.style.display = "none";
+    if (editModal) editModal.style.display = "none";
+
+    if (searchInput) {
+        searchInput.addEventListener("keyup", function () {
+            let filter = searchInput.value.toLowerCase();
+            tableRows.forEach(row => {
+                let name = row.cells[1].innerText.toLowerCase();
+                row.style.display = name.includes(filter) ? "" : "none";
+            });
         });
-    });
-    
+    }
 });
 
-// Open and Close Add Modal
 function openAddModal() {
-    document.getElementById("addModal").style.display = "block";
+    const addModal = document.getElementById("addModal");
+    if (addModal) addModal.style.display = "flex";
 }
 
 function closeAddModal() {
-    document.getElementById("addModal").style.display = "none";
+    const addModal = document.getElementById("addModal");
+    if (addModal) addModal.style.display = "none";
 }
 
-// Open and Close Edit Modal
 function openEditModal(id, name, expertise, phone, email) {
     document.getElementById("edit_id").value = id;
     document.getElementById("edit_name").value = name;
     document.getElementById("edit_expertise").value = expertise;
     document.getElementById("edit_phone").value = phone;
     document.getElementById("edit_email").value = email;
-    document.getElementById("editModal").style.display = "block";
+
+    const editModal = document.getElementById("editModal");
+    if (editModal) editModal.style.display = "flex";
 }
 
 function closeEditModal() {
-    document.getElementById("editModal").style.display = "none";
+    const editModal = document.getElementById("editModal");
+    if (editModal) editModal.style.display = "none";
 }
 
-// Delete Stylist Confirmation
-function deleteStylist(stylistId) {
+function deleteStylist(id) {
     if (confirm("Are you sure you want to delete this stylist?")) {
-        window.location.href = `delete_stylist.php?id=${stylistId}`;
+        const form = document.getElementById("deleteForm_" + id);
+        if (form) form.submit();
     }
 }
 
-window.onclick = function(event) {
-    let addUserModal = document.getElementById('addUserModal');
-    let editModal = document.getElementById('editModal');
+window.addEventListener("click", function (event) {
+    const addModal = document.getElementById("addModal");
+    const editModal = document.getElementById("editModal");
 
-    if (event.target === addUserModal) {
-        closeAddUserModal();
-    }
-    if (event.target === editModal) {
-        closeEditModal();
-    }
-};
+    if (event.target === addModal) closeAddModal();
+    if (event.target === editModal) closeEditModal();
+});

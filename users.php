@@ -2,13 +2,10 @@
 session_start();
 include 'config.php';
 
-// Check if the admin is logged in 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: login.php");
     exit();
-}
-
-
+}	
 // Fetch users from the database
 $query = "SELECT id, customer_name, phone, email FROM users";
 $users = $conn->query($query);
@@ -37,6 +34,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_id'])) {
     header("Location: users.php");
     exit();
 }
+
+// Update User
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_user'])) {
+    $id = intval($_POST['id']);
+    $name = htmlspecialchars($_POST['customer_name'], ENT_QUOTES, 'UTF-8');
+    $phone = htmlspecialchars($_POST['phone'], ENT_QUOTES, 'UTF-8');
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $stmt = $conn->prepare("UPDATE users SET customer_name = ?, phone = ?, email = ? WHERE id = ?");
+        $stmt->bind_param("sssi", $name, $phone, $email, $id);
+        $stmt->execute();
+    }
+    header("Location: users.php");
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -46,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_id'])) {
     <link rel="stylesheet" href="users.css">
     <link rel="stylesheet" href="modal.css">
     <?php include 'sidebar.php'; ?>
+    <?php include 'notification.php'; ?>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("addModal").style.display = "none";
@@ -162,13 +177,20 @@ window.onclick = function(event) {
         <div class="modal-content">
             <span class="close" onclick="closeEditModal()">&times;</span>
             <center><h2>Edit User</h2></center>
-            <form method="POST" action="edit_user.php">
-                <input type="hidden" name="id" id="edit_id">
-                <input type="text" name="customer_name" id="edit_name" required>
-                <input type="text" name="phone" id="edit_phone" required>
-                <input type="email" name="email" id="edit_email" required>
-                <button type="submit" name="edit_user">Update</button>
-            </form>
+            <form method="POST" action="users.php">
+    <input type="hidden" name="id" id="edit_id">
+    
+    <label for="edit_name">Full Name:</label>
+    <input type="text" name="customer_name" id="edit_name" required>
+    
+    <label for="edit_phone">Phone:</label>
+    <input type="text" name="phone" id="edit_phone" required>
+    
+    <label for="edit_email">Email:</label>
+    <input type="email" name="email" id="edit_email" required>
+    
+    <button type="submit" name="edit_user">Update</button>
+</form>
         </div>
     </div>
 </body>
