@@ -1,35 +1,45 @@
 <?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Include database connection
-include 'config.php'; 
+include 'config.php';
 
 // Initialize default values
 $name = "Unknown";
 $position = "Not Assigned";
 $profileImage = "profile.jpg"; // Default profile image
+$password = ""; // Initialize password variable
 
-// Fetch admin details from the database using prepared statement
-$query = "SELECT name, position, profile_image FROM admin WHERE id = ?";
-$stmt = mysqli_prepare($conn, $query);
-$id = 1; // Assuming single admin, adjust if necessary
-mysqli_stmt_bind_param($stmt, "i", $id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if ($result && mysqli_num_rows($result) > 0) {
-    $row = mysqli_fetch_assoc($result);
-    $name = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
-    $position = htmlspecialchars($row['position'], ENT_QUOTES, 'UTF-8');
-
-    // If an image exists, convert it to base64
-    if (!empty($row['profile_image'])) {
-        $profileImage = 'data:image/jpeg;base64,' . base64_encode($row['profile_image']);
+// Check if user is logged in
+if (isset($_SESSION['user_id'])) {
+    $id = $_SESSION['user_id']; // Get the logged-in user's ID from session
+    
+    // Fetch admin details from the database using prepared statement
+    $query = "SELECT name, position, profile_image, password FROM admin WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $name = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
+        $position = htmlspecialchars($row['position'], ENT_QUOTES, 'UTF-8');
+        $password = $row['password']; // Store password as plain text (not hashed)
+        
+        // If an image exists, convert it to base64
+        if (!empty($row['profile_image'])) {
+            $profileImage = 'data:image/jpeg;base64,' . base64_encode($row['profile_image']);
+        }
     }
 }
 
 // Close the database connection
 mysqli_close($conn);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,6 +167,7 @@ mysqli_close($conn);
                 </div>
                 <li onclick="setActive(this)"><a href="stylist.php">Stylists</a></li>
                 <li onclick="setActive(this)"><a href="users.php">Users</a></li>
+                <li onclick="setActive(this)"><a href="settings.php">Settings</a></li>
             </ul>
         </nav>
         <button id="logout-btn" class="logout">Log out</button>      
@@ -164,4 +175,3 @@ mysqli_close($conn);
     </div>
 </body>
 </html>
-

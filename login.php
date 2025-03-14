@@ -19,11 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_result($id, $db_username, $db_password);
             $stmt->fetch();
 
-            // Debugging: Check fetched password hash
-            // echo "DB Password: " . $db_password;
-
-            // Verify password hash
-            if (password_verify($password, $db_password)) {
+            // Direct password comparison (no hashing)
+            if ($password === $db_password) {
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $db_username;
                 $_SESSION['admin_logged_in'] = true;

@@ -1,37 +1,41 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php'; // Ensure PHPMailer is installed via Composer
+require 'vendor/autoload.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
-    $_SESSION['email'] = $email; // Store email in session
-
+    $_SESSION['email'] = $email;
+    
     // Generate a 4-digit OTP
     $otp = rand(1000, 9999);
-    $_SESSION['otp'] = $otp; // Store OTP in session
-
+    $_SESSION['otp'] = $otp;
+    
     // PHPMailer setup
     $mail = new PHPMailer(true);
     try {
         // SMTP Configuration
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com'; // Use Gmail SMTP server
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'delacruzjefrey15@gmail.com'; // Your Gmail address
-        $mail->Password = 'hzjf rwpp kwjp djum'; // Your Gmail App Password (Not your Gmail password)
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Username = 'delacruzjefrey15@gmail.com';
+        $mail->Password = 'hzjf rwpp kwjp djum'; // Replace with new app password
+        $mail->SMTPSecure = 'tls'; // Changed from PHPMailer::ENCRYPTION_STARTTLS
         $mail->Port = 587;
-
+        
         // Email setup
-        $mail->setFrom('Salon@gmail.com', 'FROM DIVAS SALON '); // Sender's email
-        $mail->addAddress($email); // Recipient's email
+        $mail->setFrom('Salon@gmail.com', 'FROM DIVAS SALON');
+        $mail->addAddress($email);
         $mail->Subject = "OTP Code For Password Reset";
         $mail->Body = "Your OTP for password reset is: " . $otp;
         $mail->isHTML(false);
-
+        
         if ($mail->send()) {
             echo "<script>
                     alert('OTP sent successfully! Redirecting to OTP verification...');
@@ -42,11 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<script>alert('Failed to send OTP. Please try again.');</script>";
         }
     } catch (Exception $e) {
-        echo "<script>alert('Error sending OTP: " . $mail->ErrorInfo . "');</script>";
+        echo "<script>alert('Error sending OTP: " . addslashes($mail->ErrorInfo) . "');</script>";
     }
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

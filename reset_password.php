@@ -1,18 +1,16 @@
 <?php
-session_start();
 include 'config.php';
 
-// Check if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $admin_username = $_SESSION['admin_username']; // Get admin username
+// Check if the form was submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Fetch the admin username, new password, and confirm password from the form
+    $admin_username = isset($_POST['admin_username']) ? trim($_POST['admin_username']) : null;
+    $new_password = isset($_POST['password']) ? trim($_POST['password']) : null;
+    $confirm_password = isset($_POST['confirm_password']) ? trim($_POST['confirm_password']) : null;
 
-    // Fetch the new password from the form
-    $new_password = trim($_POST['password']);
-    $confirm_password = trim($_POST['confirm_password']);
-
-    // Check if password fields are empty
-    if (empty($new_password) || empty($confirm_password)) {
-        die("⚠ Error: Password fields cannot be empty.");
+    // Check if any fields are empty
+    if (empty($admin_username) || empty($new_password) || empty($confirm_password)) {
+        die("⚠ Error: All fields are required.");
     }
 
     // Check if passwords match
@@ -20,10 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("⚠ Error: Passwords do not match.");
     }
 
-    // ✅ Fix: Properly update the password
+    // Update the password (plain text)
     $update_query = "UPDATE admin SET password = ? WHERE username = ?";
     $stmt = $conn->prepare($update_query);
-    
+
     if (!$stmt) {
         die("⚠ Error preparing statement: " . $conn->error);
     }
@@ -31,15 +29,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ss", $new_password, $admin_username);
 
     if ($stmt->execute()) {
-        echo "✅ Password updated successfully!";
-        session_destroy(); // Logout after password change
-        header("Location: login.php");
-        exit();
+        // Check if any rows were affected
+        if ($stmt->affected_rows > 0) {
+            echo "✅ Password updated successfully!";
+            header("Location: login.php");
+            exit();
+        } else {
+            die("⚠ No account found with username: " . $admin_username);
+        }
     } else {
         die("⚠ Error updating password: " . $stmt->error);
     }
 }
 ?>
+
+
+
 
 
 <!DOCTYPE html>
@@ -121,12 +126,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
     <script>
         function validateForm() {
+            let username = document.getElementById("admin_username").value;
             let password = document.getElementById("password").value;
             let confirmPassword = document.getElementById("confirm_password").value;
             let errorMessage = document.getElementById("error-message");
 
             if (password !== confirmPassword) {
                 errorMessage.style.display = "block";
+                return false;
+            } else if (username === "" || password === "" || confirmPassword === "") {
+                alert("All fields are required.");
                 return false;
             } else {
                 errorMessage.style.display = "none";
@@ -138,17 +147,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <h2>Reset Admin Password</h2>
-        <form action="reset_password.php" method="POST" onsubmit="return validateForm()">
-            <label for="password">New Password:</label>
-            <input type="password" id="password" name="password" required>
+        <form action="reset_password.php" method="POST">
+        <label for="admin_username">Admin Username:</label>
+        <input type="text" id="admin_username" name="admin_username" required>
 
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required>
 
-            <p class="error-message" id="error-message">Passwords do not match!</p>
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
 
-            <button type="submit">Reset Password</button>
+        <button type="submit">Reset Password</button>
         </form>
+
+        
     </div>
 </body>
 </html>
