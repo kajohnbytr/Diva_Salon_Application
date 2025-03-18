@@ -99,7 +99,7 @@ $totalNotifications = $newUsers + $newStylists + $newAppointments;
             location.reload(); // Reloads the page every 30 seconds to update notifications
         }
 
-        setInterval(refreshNotifications, 30000);
+        setInterval(refreshNotifications, 300000);
     </script>
 </body>
 </html>

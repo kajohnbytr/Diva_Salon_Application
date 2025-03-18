@@ -45,13 +45,6 @@ while ($row = $monthQuery->fetch_assoc()) {
     $appointmentsPerMonth[$row['month']] = $row['total'];
 }
 
-// Fetch top-rated stylists
-$topStylists = [];
-$topStylistQuery = $conn->query("SELECT stylist_name, rating FROM stylists ORDER BY rating DESC LIMIT 5");
-while ($row = $topStylistQuery->fetch_assoc()) {
-    $topStylists[] = $row;
-}
-
 $appointments = $conn->query("
     SELECT 
         users.customer_name, 
@@ -95,16 +88,6 @@ $appointments = $conn->query("
         <div class="chart-wrapper">
             <div class="chart-container">
                 <canvas id="chart"></canvas>
-            </div>
-        </div>
-        <div class="stylist-wrapper">
-            <div class="top-stylist">
-                <h3>Top Rated Stylists</h3>
-                <ul>
-                    <?php foreach ($topStylists as $stylist): ?>
-                        <li><?= htmlspecialchars($stylist['stylist_name']) ?> - <?= htmlspecialchars($stylist['rating']) ?>★</li>
-                    <?php endforeach; ?>
-                </ul>
             </div>
         </div>
     </section>

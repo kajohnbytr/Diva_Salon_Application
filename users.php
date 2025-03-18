@@ -15,10 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_user'])) {
     $name = htmlspecialchars($_POST['customer_name'], ENT_QUOTES, 'UTF-8');
     $phone = htmlspecialchars($_POST['phone'], ENT_QUOTES, 'UTF-8');
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password']; // Store password as-is
     
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $stmt = $conn->prepare("INSERT INTO users (customer_name, phone, email) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $name, $phone, $email);
+        $stmt = $conn->prepare("INSERT INTO users (customer_name, phone, email, password) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $name, $phone, $email, $password);
         $stmt->execute();
     }
     header("Location: users.php");
@@ -47,6 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_user'])) {
         $stmt->bind_param("sssi", $name, $phone, $email, $id);
         $stmt->execute();
     }
+    
+    // If password is provided, update it separately
+    if (!empty($_POST['password'])) {
+        $password = $_POST['password'];
+        $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+        $stmt->bind_param("si", $password, $id);
+        $stmt->execute();
+    }
+    
     header("Location: users.php");
     exit();
 }
@@ -168,6 +178,9 @@ window.onclick = function(event) {
                 <label for="email">Email:</label>
                 <input type="email" name="email" placeholder="Enter email" id="email" required>
                 
+                <label for="password">Password:</label>
+                <input type="password" name="password" placeholder="Enter password" id="password" required>
+                
                 <button type="submit" name="add_user">Add User</button>
             </form>
         </div>
@@ -178,19 +191,22 @@ window.onclick = function(event) {
             <span class="close" onclick="closeEditModal()">&times;</span>
             <center><h2>Edit User</h2></center>
             <form method="POST" action="users.php">
-    <input type="hidden" name="id" id="edit_id">
-    
-    <label for="edit_name">Full Name:</label>
-    <input type="text" name="customer_name" id="edit_name" required>
-    
-    <label for="edit_phone">Phone:</label>
-    <input type="text" name="phone" id="edit_phone" required>
-    
-    <label for="edit_email">Email:</label>
-    <input type="email" name="email" id="edit_email" required>
-    
-    <button type="submit" name="edit_user">Update</button>
-</form>
+                <input type="hidden" name="id" id="edit_id">
+                
+                <label for="edit_name">Full Name:</label>
+                <input type="text" name="customer_name" id="edit_name" required>
+                
+                <label for="edit_phone">Phone:</label>
+                <input type="text" name="phone" id="edit_phone" required>
+                
+                <label for="edit_email">Email:</label>
+                <input type="email" name="email" id="edit_email" required>
+                
+                <label for="edit_password">Password (leave blank to keep current):</label>
+                <input type="password" name="password" id="edit_password" placeholder="Enter new password">
+                
+                <button type="submit" name="edit_user">Update</button>
+            </form>
         </div>
     </div>
 </body>

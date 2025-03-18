@@ -3,15 +3,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const editModal = document.getElementById("editModal");
     const searchInput = document.getElementById("searchStylist");
     const tableRows = document.querySelectorAll("tbody tr");
-
+    
     if (addModal) addModal.style.display = "none";
     if (editModal) editModal.style.display = "none";
-
+    
     if (searchInput) {
         searchInput.addEventListener("keyup", function () {
             let filter = searchInput.value.toLowerCase();
             tableRows.forEach(row => {
-                let name = row.cells[1].innerText.toLowerCase();
+                let name = row.cells[2].innerText.toLowerCase(); // Changed from 1 to 2 to match the Name column
                 row.style.display = name.includes(filter) ? "" : "none";
             });
         });
@@ -34,7 +34,7 @@ function openEditModal(id, name, expertise, phone, email) {
     document.getElementById("edit_expertise").value = expertise;
     document.getElementById("edit_phone").value = phone;
     document.getElementById("edit_email").value = email;
-
+    
     const editModal = document.getElementById("editModal");
     if (editModal) editModal.style.display = "flex";
 }
@@ -54,7 +54,7 @@ function deleteStylist(id) {
 window.addEventListener("click", function (event) {
     const addModal = document.getElementById("addModal");
     const editModal = document.getElementById("editModal");
-
+    
     if (event.target === addModal) closeAddModal();
     if (event.target === editModal) closeEditModal();
 });

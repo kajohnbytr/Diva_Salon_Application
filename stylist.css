@@ -104,7 +104,9 @@ table th {
 .delete-btn {
     background-color: #dc3545;
     color: white;
+
 }
+
 
 /* Animations */
 @keyframes fadeIn {
