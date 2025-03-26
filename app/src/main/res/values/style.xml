@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CircularImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Theme.YourApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="materialCalendarStyle">@style/Widget.Material3.MaterialCalendar</item>
+    </style>
+
+</resources>

@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">SalonApp</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_in2">Sign in</string>
+    <string name="sign_up_2">Sign up</string>
+    <string name="login">Login</string>
+    <string name="login_txgt">Login</string>
+    <string name="profile">profile</string>
+    <string name="set_schedule">Set Schedule</string>
+    <string name="profile2">Profile</string>
+    <string name="title_activity_bottom_navigation">BottomNavigation</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="set_schedule_new">Set Schedule</string>
+    <string name="seet_sched">Set Schedule</string>
+    <string name="prof">Profile</string>
+    <string name="click_here">Click Here</string>
+    <string name="next">Next</string>
+</resources>
