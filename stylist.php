@@ -42,14 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_stylist'])) {
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         try {
-            // Use NULL directly in the query
-            $sql = "INSERT INTO stylists (stylist_name, expertise, phone, email, picture) VALUES (?, ?, ?, ?, " . ($picture_uploaded ? "?" : "NULL") . ")";
-            $stmt = $conn->prepare($sql);
-
+            // Modify the query to handle picture upload correctly
             if ($picture_uploaded) {
-                $stmt->bind_param("ssssss", $name, $expertise, $phone, $email, $picture);
+                $sql = "INSERT INTO stylists (stylist_name, expertise, phone, email, picture) VALUES (?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sssss", $name, $expertise, $phone, $email, $picture);
             } else {
-                $stmt->bind_param("sssss", $name, $expertise, $phone, $email);
+                $sql = "INSERT INTO stylists (stylist_name, expertise, phone, email) VALUES (?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssss", $name, $expertise, $phone, $email);
             }
 
             if ($stmt->execute() === false) {
@@ -128,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_id'])) {
     header("Location: stylist.php");
     exit();
 }
+// Rest of the file remains the same as in the original code
 ?>
 
 <!DOCTYPE html>

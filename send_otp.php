@@ -1,30 +1,65 @@
 <?php
 session_start();
-require 'config.php'; // Database connection
+require 'vendor/autoload.php';
+require 'config.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
+if (!isset($_SESSION['email'])) {
+    echo "<script>alert('No email found. Try resetting your password again.'); window.location.href='forgotpassword.php';</script>";
+    exit();
+}
 
-    // Check if email exists in the database
-    $query = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $query->execute([$email]);
-    $user = $query->fetch();
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
-    if ($user) {
-        $otp = rand(1000, 9999); // Generate 4-digit OTP
-        $_SESSION['otp'] = $otp;
-        $_SESSION['email'] = $email;
+function sendOTP($email) {
+    // Generate OTP
+    $otp = sprintf("%04d", rand(1000, 9999));
+    
+    // Create PHPMailer instance
+    $mail = new PHPMailer(true);
+
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com'; // Your SMTP server
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'your_email@gmail.com'; // SMTP username
+        $mail->Password   = 'your_app_password'; // App password, not your regular password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+
+        // Recipients
+        $mail->setFrom('no-reply@yourwebsite.com', 'Your Website');
+        $mail->addAddress($email);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Your New OTP Code';
+        $mail->Body    = "Your new OTP is: <b>$otp</b>";
+        $mail->AltBody = "Your new OTP is: $otp";
 
         // Send email
-        $subject = "Password Reset OTP";
-        $message = "Your OTP for password reset is: $otp";
-        $headers = "From: no-reply@yourwebsite.com";
-        mail($email, $subject, $message, $headers);
-
-        header("Location: otp.php");
-        exit();
-    } else {
-        echo "<script>alert('Email not found!'); window.location.href='forgotpassword.php';</script>";
+        $mail->send();
+        
+        return $otp;
+    } catch (Exception $e) {
+        // Log the error
+        error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        return false;
     }
+}
+
+// Send OTP
+$otp = sendOTP($_SESSION['email']);
+
+if ($otp) {
+    // Update OTP in session
+    $_SESSION['otp'] = $otp;
+
+    header("Location: otp.php");
+    exit();
+} else {
+    echo "<script>alert('Failed to resend OTP. Please try again.'); window.location.href='forgotpassword.php';</script>";
 }
 ?>

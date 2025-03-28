@@ -22,17 +22,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $phone = trim($input['phone']);
         $password = trim($input['password']);
 
-        // Insert into database (storing password as plain text as per your request)
-        $stmt = $conn->prepare("INSERT INTO users (customer_name, email, phone, password) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $fullName, $email, $phone, $password);
-        
-        if ($stmt->execute()) {
-            $response = ["success" => true, "message" => "Registration successful!"];
+        // Check if email already exists in the database
+        $emailCheckStmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+        $emailCheckStmt->bind_param("s", $email);
+        $emailCheckStmt->execute();
+        $emailCheckStmt->store_result();
+
+        if ($emailCheckStmt->num_rows > 0) {
+            // Email already exists
+            $response["message"] = "Email already in use";
         } else {
-            $response["message"] = "Registration failed: " . $stmt->error;
+            // Email is available, proceed with registration
+            $stmt = $conn->prepare("INSERT INTO users (customer_name, email, phone, password) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $fullName, $email, $phone, $password);
+            
+            if ($stmt->execute()) {
+                $response = ["success" => true, "message" => "Registration successful!"];
+            } else {
+                $response["message"] = "Registration failed: " . $stmt->error;
+            }
+
+            $stmt->close();
         }
 
-        $stmt->close();
+        $emailCheckStmt->close();
     } else {
         $response["message"] = "All fields are required";
     }

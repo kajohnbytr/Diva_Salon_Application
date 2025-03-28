@@ -5,10 +5,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_SESSION['otp']) && $entered_otp == $_SESSION['otp']) {
         unset($_SESSION['otp']); // Remove OTP from session after successful verification
-        header("Location: reset_password.php"); // Redirect to password reset page
+        header("Location: otp.php"); // Redirect to password reset page
         exit();
     } else {
-        echo "Invalid OTP. Please try again.";
+        echo "<script>
+                alert('⚠ Invalid OTP. Please try again.');
+                window.location.href = 'otp.php'; // Redirect back to OTP input page
+              </script>";
+        exit();
     }
 }
 ?>
