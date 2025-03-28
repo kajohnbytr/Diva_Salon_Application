@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Direct password comparison (no hashing)
             if ($password === $db_password) {
-                $_SESSION['user_id'] = $id;
+                // Set session variables consistently
+                $_SESSION['admin_id'] = $id; // Corrected variable name
                 $_SESSION['username'] = $db_username;
                 $_SESSION['admin_logged_in'] = true;
 
@@ -40,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

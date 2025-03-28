@@ -11,14 +11,13 @@ include 'config.php';
 $name = "Unknown";
 $position = "Not Assigned";
 $profileImage = "profile.jpg"; // Default profile image
-$password = ""; // Initialize password variable
 
-// Check if user is logged in
-if (isset($_SESSION['user_id'])) {
-    $id = $_SESSION['user_id']; // Get the logged-in user's ID from session
+// Check if admin is logged in
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+    $id = $_SESSION['admin_id']; // Get the logged-in admin's ID from session
     
     // Fetch admin details from the database using prepared statement
-    $query = "SELECT name, position, profile_image, password FROM admin WHERE id = ?";
+    $query = "SELECT name, position, profile_image FROM admin WHERE id = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
@@ -28,7 +27,6 @@ if (isset($_SESSION['user_id'])) {
         $row = mysqli_fetch_assoc($result);
         $name = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
         $position = htmlspecialchars($row['position'], ENT_QUOTES, 'UTF-8');
-        $password = $row['password']; // Store password as plain text (not hashed)
         
         // If an image exists, convert it to base64
         if (!empty($row['profile_image'])) {

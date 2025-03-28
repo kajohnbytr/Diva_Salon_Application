@@ -12,65 +12,57 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit();
 }
 
-// Define adminId - this was missing
-$adminId = $_SESSION['admin_id'] ?? 1; // Use the ID from session or default to 1
+$adminId = $_SESSION['admin_id'] ?? null;
+if ($adminId === null) {
+    header("Location: login.php");
+    exit();
+}
 
 // Fetch admin details
-$query = "SELECT username, name, position, profile_image, password FROM admin WHERE id = ?";
+$query = "SELECT username, name, position, profile_image FROM admin WHERE id = ?";
 $stmt = mysqli_prepare($conn, $query);
 mysqli_stmt_bind_param($stmt, "i", $adminId);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $admin = mysqli_fetch_assoc($result) ?? [];
 
-$name = htmlspecialchars($admin['name'] ?? 'Unknown', ENT_QUOTES, 'UTF-8');
-$position = htmlspecialchars($admin['position'] ?? 'Not Assigned', ENT_QUOTES, 'UTF-8');
-$profileImage = !empty($admin['profile_image']) 
-    ? 'data:image/jpeg;base64,' . base64_encode($admin['profile_image']) 
-    : 'profile.jpg';
+// Extract variables for easier access
+$username = $admin['username'] ?? '';
+$name = $admin['name'] ?? '';
+$position = $admin['position'] ?? '';
+$profileImage = $admin['profile_image'] ?? null;
 
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newName = mysqli_real_escape_string($conn, $_POST['name']);
     $newPosition = mysqli_real_escape_string($conn, $_POST['position']);
-    $oldPassword = $_POST['old_password'] ?? '';
-    $newPassword = $_POST['new_password'] ?? '';
-    $confirmPassword = $_POST['confirm_password'] ?? '';
-    $imageData = !empty($_FILES["profile_image"]["tmp_name"]) ? file_get_contents($_FILES["profile_image"]["tmp_name"]) : null;
+    
+    // Handle image upload
+    $imageData = null;
+    if (!empty($_FILES["profile_image"]["tmp_name"])) {
+        $imageData = file_get_contents($_FILES["profile_image"]["tmp_name"]);
+    }
 
-    // Validate and update password if provided
-    if (!empty($oldPassword) && !empty($newPassword) && !empty($confirmPassword)) {
-        if ($oldPassword !== $admin['password']) {
-            $_SESSION['error'] = "Old password is incorrect!";
-        } elseif ($newPassword !== $confirmPassword) {
-            $_SESSION['error'] = "New password and confirmation do not match!";
-        } else {
-            $query = "UPDATE admin SET name=?, position=?, password=?, profile_image=? WHERE id=?";
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "ssssi", $newName, $newPosition, $newPassword, $imageData, $adminId);
-            if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['success'] = "Profile updated successfully!";
-                header("Location: settings.php");
-                exit();
-            } else {
-                $_SESSION['error'] = "Error updating profile!";
-            }
-        }
+    // If no new image uploaded, keep existing image
+    if ($imageData === null) {
+        $query = "UPDATE admin SET name=?, position=? WHERE id=?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "ssi", $newName, $newPosition, $adminId);
     } else {
-        // Update without changing the password
         $query = "UPDATE admin SET name=?, position=?, profile_image=? WHERE id=?";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "sssi", $newName, $newPosition, $imageData, $adminId);
-        if (mysqli_stmt_execute($stmt)) {
-            $_SESSION['success'] = "Profile updated successfully!";
-            header("Location: settings.php");
-            exit();
-        } else {
-            $_SESSION['error'] = "Error updating profile!";
-        }
+    }
+
+    if (mysqli_stmt_execute($stmt)) {
+        $_SESSION['success'] = "Profile updated successfully!";
+        header("Location: settings.php");
+        exit();
+    } else {
+        $_SESSION['error'] = "Error updating profile: " . mysqli_error($conn);
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -171,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="main-content">
         <div class="container">
             <h2>Edit Profile</h2>
-            
+
             <?php if (isset($_SESSION['success'])): ?>
                 <p class="message success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></p>
             <?php endif; ?>
@@ -188,15 +180,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <label for="position">Position</label>
                 <input type="text" id="position" name="position" value="<?php echo $position; ?>" required>
-
-                <label for="old_password">Old Password</label>
-                <input type="password" id="old_password" name="old_password" placeholder="Enter old password">
-
-                <label for="new_password">New Password</label>
-                <input type="password" id="new_password" name="new_password" placeholder="Enter new password">
-
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm new password">
 
                 <label for="profile_image">Profile Picture</label>
                 <input type="file" id="profile_image" name="profile_image" accept="image/*">
