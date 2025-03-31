@@ -1,9 +1,18 @@
-<<?php
+<?php 
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $entered_otp = $_POST['otp'];
-
+    // Check if individual OTP fields are set
+    if (isset($_POST['otp1']) && isset($_POST['otp2']) && isset($_POST['otp3']) && isset($_POST['otp4'])) {
+        // Combine individual OTP fields
+        $entered_otp = $_POST['otp1'] . $_POST['otp2'] . $_POST['otp3'] . $_POST['otp4'];
+    } else if (isset($_POST['otp'])) {
+        // If the combined hidden field is available
+        $entered_otp = $_POST['otp'];
+    } else {
+        $entered_otp = "";
+    }
+    
     if (isset($_SESSION['otp']) && $entered_otp == $_SESSION['otp']) {
         // OTP is correct
         unset($_SESSION['otp']); // Remove OTP from session

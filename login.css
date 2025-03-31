@@ -1,40 +1,42 @@
 body {
-    background-image: url(loginbackground.png);
-    background-size: cover;
-    font-family: sans-serif;
-    background-color: #f0f0f0; 
-    display: block;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
+  background-image: url(loginbackground.png);
+  background-size: cover;
+  font-family: sans-serif;
+  background-color: #f0f0f0; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
     
   }
 
+  .clickHere{
+    text-decoration: none;
+  }
   
-  
-  .container {
-    background-color: #fff;
-    padding: 80px;
+  .container {  
+    background-color: #ffffff;
+    padding: 30px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(155, 134, 134, 0.1); 
-    max-width: 25%;
-    margin: 0 auto;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+    width: 350px;
+    text-align: center;
      
   }
   
   .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
     text-align: center;
-    margin-bottom: 10px;
   }
   
-  .logo h1 {
-    font-size: 8em;
-    background-image: linear-gradient(yellow, black);
-    -webkit-background-clip:text ;
-    color: transparent;
-    margin-bottom: 5px;
-    text-align: center;
+  .logo img {
+    
+    height: auto;
   }
   
   .logo p {
@@ -50,25 +52,24 @@ body {
   }
   
   form input[type="text"],
-  form input[type="password"] {
+form input[type="password"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
-    margin-bottom: 10px;
-    
-   
-  }
+    margin-bottom: 15px;
+    font-size: 14px;
+}
   
   form input[type="submit"] {
     background-color: #000000; 
     color: #ffffff;
-    padding: 10px 20px;
+    padding: 10px;
     border: none;
-    border-radius: 10px;
-    display: block; 
-    margin: 0 auto; 
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
    

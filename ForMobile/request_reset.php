@@ -56,13 +56,13 @@ if ($stmt->execute()) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';  
         $mail->SMTPAuth = true;
-        $mail->Username = 'deverafroilan9@gmail.com'; // Replace with your Gmail
-        $mail->Password = 'osob oubj dzau zhdi';  // Replace with your Gmail App Password
+        $mail->Username = 'batangamer@gmail.com'; // Replace with your Gmail
+        $mail->Password = 'epbs taar ydpv wzht';  // Replace with your Gmail App Password
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
         // Email Content
-        $mail->setFrom('deverafroilan9@gmail.com', 'Diva Salon');
+        $mail->setFrom('batangamer@gmail.com', 'Diva Salon');
         $mail->addAddress($email);
         $mail->Subject = 'Password Reset OTP';
         $mail->Body = "Your OTP for password reset is: $otp\nThis OTP will expire in 10 minutes.";

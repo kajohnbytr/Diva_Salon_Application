@@ -51,13 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>DIVA Login</title>
     <link rel="stylesheet" type="text/css" href="login.css">
 </head>
-<body>
-    <div class="logo">
-        <h1>D I V A</h1>
-        <p>Achieve your style</p>
+<body style="overflow: hidden;">
+    <div class="logo" style="margin-top: 50px;">
+        <img src="logo.png" alt="Logo">
     </div>
 
-    <div class="container">
+    <div class="container" style="padding-top: 50px;
+    padding-bottom: 50px;">
         <form method="POST" action="login.php">
             <strong><label for="username">Username:</label></strong>
             <input type="text" id="username" name="username" required>
@@ -66,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="password" id="password" name="password" required>
 
             <?php if (!empty($error)): ?>
-            <center><p style="color: red; font-weight: bold;"><?php echo $error; ?></p></center>
+            <p style="color: red; font-weight: bold;"><?php echo $error; ?></p>
             <?php endif; ?>
 
-            <input type="submit" value="Log in">
+            <input type="submit" value="Log in" style="width: 100%; margin-top: 20px; padding: 10px;">
         </form>
-        <center><p>Forgot password? <a href="forgotpassword.php" style="color: blue; text-decoration: underline; display: inline;">Click here</a></p></center>
+       <p>Forgot password? <a href="forgotpassword.php" style="color: #DCBA4C; text-decoration: none; display: inline;">Click here</a></p></center>
     </div>
 </body>
 </html>

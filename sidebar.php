@@ -128,6 +128,7 @@ mysqli_close($conn);
         }
 
         .logout {
+            border-radius: 5px;
             width: 100%;
             padding: 10px;
             background: black;

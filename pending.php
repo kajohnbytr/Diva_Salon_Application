@@ -35,94 +35,116 @@ if (!$appointments) {
     <?php include 'sidebar.php'; ?>
     <?php include 'notification.php'; ?>
     <style>
-        .custom-dropdown {
-            position: relative;
-            display: inline-block;
-            width: 120px;
-        }
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    height:auto;
+    
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    height: max-content;
+}
+.tableHeader {
+    max-height: fit-content;
+}
+td{
+    height: auto;
+}
+.tableRows{
+    height: max-content;
+}
 
-        .dropdown-button {
-            padding: 5px;
-            border-radius: 5px;
-            font-weight: bold;
-            border: none;
-            width: 100%;
-            text-align: center;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.dropdown-button {
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .dropdown-button::after {
-            content: " ▼";
-            font-size: 12px;
-        }
+.dropdown-button::after {
+    content: " ▼";
+    font-size: 12px;
+}
 
-        /* Status Colors */
-        .dropdown-button.pending {
-            background-color: yellow !important;
-            color: black !important;
-        }
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+    z-index: 10; /* Increased z-index to ensure it appears above other elements */
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    top: 100%; /* Position dropdown below the button */
+    left: 0;
+    max-height: 200px; /* Optional: limits height if many options */
+    overflow-y:visible; /* Allows scrolling if content is long */
+}
 
-        .dropdown-button.approved {
-            background-color: green !important;
-            color: white !important;
-        }
+/* Status Colors */
+.dropdown-button.pending {
+    background-color: yellow !important;
+    color: black !important;
+}
 
-        .dropdown-button.rejected {
-            background-color: red !important;
-            color: white !important;
-        }
+.dropdown-button.approved {
+    background-color: green !important;
+    color: white !important;
+}
 
-        /* Hover Effects */
-        .dropdown-button.pending:hover {
-            background-color: darkgoldenrod !important;
-            color: white !important;
-        }
+.dropdown-button.rejected {
+    background-color: red !important;
+    color: white !important;
+}
 
-        .dropdown-button.approved:hover {
-            background-color: darkgreen !important;
-        }
+/* Hover Effects */
+.dropdown-button.pending:hover {
+    background-color: darkgoldenrod !important;
+    color: white !important;
+}
 
-        .dropdown-button.rejected:hover {
-            background-color: darkred !important;
-        }
+.dropdown-button.approved:hover {
+    background-color: darkgreen !important;
+}
 
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: white;
-            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-            z-index: 1;
-            width: 100%;
-            border-radius: 5px;
-            overflow: hidden;
-        }
+.dropdown-button.rejected:hover {
+    background-color: darkred !important;
+}
 
-        .dropdown-menu div {
-            padding: 5px;
-            cursor: pointer;
-            text-align: center;
-        }
+.dropdown-menu div {
+    padding: 5px;
+    cursor: pointer;
+    text-align: center;
+}
 
-        .dropdown-menu div.approved {
-            background-color: green;
-            color: white;
-        }
+.dropdown-menu div.approved {
+    background-color: green;
+    color: white;
+}
 
-        .dropdown-menu div.rejected {
-            background-color: red;
-            color: white;
-        }
+.dropdown-menu div.rejected {
+    background-color: red;
+    color: white;
+}
 
-        .dropdown-menu div.approved:hover {
-            background-color: darkgreen;
-        }
+.dropdown-menu div.approved:hover {
+    background-color: darkgreen;
+}
 
-        .dropdown-menu div.rejected:hover {
-            background-color: darkred;
-        }
+.dropdown-menu div.rejected:hover {
+    background-color: darkred;
+}
+
     </style>
 </head>
 <body>
@@ -131,7 +153,7 @@ if (!$appointments) {
         <input type="text" id="searchAppointment" class="search-box" placeholder="Search Appointments...">
 
         <table>
-            <thead>
+            <thead class="tableHeader">
                 <tr>
                     <th>ID</th>
                     <th>Customer Name</th>
@@ -147,7 +169,7 @@ if (!$appointments) {
                     <tr><td colspan="7">No pending appointments found.</td></tr>
                 <?php else : ?>
                     <?php while ($row = $appointments->fetch_assoc()) : ?>
-                        <tr>
+                        <tr class="tableRows">
                             <td><?= htmlspecialchars($row['id']); ?></td>
                             <td><?= htmlspecialchars($row['customer_name']); ?></td>
                             <td><?= htmlspecialchars($row['stylist_name']); ?></td>

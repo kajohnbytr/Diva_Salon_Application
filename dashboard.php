@@ -128,36 +128,33 @@ $appointments = $conn->query("
     const weeklyData = <?= json_encode(array_values($appointmentsPerWeek)); ?>;
 
     const ctx = document.getElementById('chart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartLabels,
-            datasets: [
-              
-                {
-                    label: 'Appointments Per Day',
-                    data: dailyData,
-                    backgroundColor: 'blue'
-                },
-                {
-                    label: 'Appointments Per Week',
-                    data: weeklyData,
-                    backgroundColor: 'green'
-                },
-                {
-                    label: 'Appointments Per Month',
-                    data: chartData,
-                    backgroundColor: 'gold'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: chartLabels,
+        datasets: [
+            {
+                label: 'Appointments Per Day',
+                data: dailyData,
+                backgroundColor: 'blue'
+            },
+            {
+                label: 'Appointments Per Week',
+                data: weeklyData,
+                backgroundColor: 'green'
+            },
+            {
+                label: 'Appointments Per Month',
+                data: chartData,
+                backgroundColor: 'gold'
             }
-        }
-    });
+        ]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false
+    }
+});
 </script>
 
 </body>
