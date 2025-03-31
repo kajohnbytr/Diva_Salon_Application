@@ -87,6 +87,7 @@ class HomeFragment : Fragment() {
             )
         )
 
+
         adapter = HomeHorAdapters(requireContext(), serviceList) { name, services ->
             showServiceDetailsDialog(name, services)
         }

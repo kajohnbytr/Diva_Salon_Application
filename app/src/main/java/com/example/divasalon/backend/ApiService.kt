@@ -17,6 +17,8 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
+
+
     @GET("checkEmailExists")
     fun checkEmailExists(@Query("email") email: String): Call<ResponseBody>
 

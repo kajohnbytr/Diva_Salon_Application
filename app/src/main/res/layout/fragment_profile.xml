@@ -66,8 +66,9 @@
 
             <ImageButton
                 android:id="@+id/imageButton"
-                android:layout_width="48dp"
+                android:layout_width="100dp"
                 android:layout_height="48dp"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Logout"
                 app:srcCompat="@drawable/logout" />

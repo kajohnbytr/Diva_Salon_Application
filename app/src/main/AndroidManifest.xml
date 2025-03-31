@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_logo"
+        android:icon="@drawable/ic_logo"
         android:label="Diva Salon"
-        android:roundIcon="@mipmap/ic_logo"
+        android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.DivaSalon"
         android:usesCleartextTraffic="true"
@@ -30,10 +30,10 @@
             android:exported="true"
             android:label="@string/title_activity_bottom_navigation" />
         <activity
-            android:name=".activities.Login"
+            android:name=".activities.Register"
             android:exported="true" />
         <activity
-            android:name=".activities.Register"
+            android:name=".activities.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

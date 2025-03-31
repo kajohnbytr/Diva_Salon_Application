@@ -16,6 +16,7 @@ import com.example.divasalon.backend.ApiService
 import com.example.divasalon.backend.RetrofitClient
 import com.example.divasalon.models.User
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -89,6 +90,12 @@ class Register : AppCompatActivity() {
             return
         }
 
+        // Check if the phone number is exactly 11 digits and contains only numbers
+        if (phoneStr.length != 11 || !phoneStr.all { it.isDigit() }) {
+            Toast.makeText(this, "Phone number must be 11 digits long", Toast.LENGTH_LONG).show()
+            return
+        }
+
         if (password.isEmpty()) {
             Toast.makeText(this, "Password is required", Toast.LENGTH_LONG).show()
             return
@@ -104,10 +111,9 @@ class Register : AppCompatActivity() {
             return
         }
 
-        // Convert phone to integer safely
-        val phone = try {
-            phoneStr.toInt()
-        } catch (e: NumberFormatException) {
+        // Convert phone to integer safely (if you really need to do this)
+        val phone = phoneStr.toLongOrNull()
+        if (phone == null) {
             Toast.makeText(this, "Invalid phone number", Toast.LENGTH_LONG).show()
             return
         }
@@ -124,6 +130,7 @@ class Register : AppCompatActivity() {
             }
         }
     }
+
 
     private fun togglePasswordVisibility() {
         if (passwordEditText.transformationMethod == PasswordTransformationMethod.getInstance()) {
@@ -146,17 +153,14 @@ class Register : AppCompatActivity() {
         }
         conpasswordEditText.setSelection(conpasswordEditText.text.length)
     }
-
     private fun checkIfEmailExists(email: String, callback: (Boolean) -> Unit) {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
         val call = apiService.checkEmailExists(email)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    callback(false)
-                } else {
-                    callback(true)
-                }
+                // Check the HTTP status code explicitly
+                val emailExists = response.code() == 409
+                callback(emailExists)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -167,6 +171,7 @@ class Register : AppCompatActivity() {
         })
     }
 
+
     private fun submitUserData(user: User) {
         submitButton.isEnabled = false
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
@@ -174,15 +179,28 @@ class Register : AppCompatActivity() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 submitButton.isEnabled = true
-                if (response.isSuccessful) {
-                    Toast.makeText(this@Register, "Registration successful!", Toast.LENGTH_LONG).show()
-                    clearFormFields()
-                    val intent = Intent(this@Register, Login::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Log.e("API_ERROR", "Error: ${response.code()}")
-                    Toast.makeText(this@Register, "Registration failed. Please try again.", Toast.LENGTH_LONG).show()
+
+                // Parse the response body
+                val responseBody = response.body()?.string()
+                Log.d("REGISTRATION", "Response: $responseBody")
+
+                try {
+                    val jsonResponse = JSONObject(responseBody)
+                    val success = jsonResponse.getBoolean("success")
+                    val message = jsonResponse.getString("message")
+
+                    if (success) {
+                        Toast.makeText(this@Register, "Registration successful!", Toast.LENGTH_LONG).show()
+                        clearFormFields()
+                        val intent = Intent(this@Register, Login::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this@Register, message, Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Log.e("REGISTRATION", "Error parsing response", e)
+                    Toast.makeText(this@Register, "An error occurred", Toast.LENGTH_LONG).show()
                 }
             }
 

@@ -47,7 +47,6 @@ class Schedule : Fragment() {
     private val serviceCategories = listOf(
         "Hair Services",
         "Nail Services",
-        "Skincare and Facial Treatments",
         "Makeup Services",
         "Body Treatments & Massage"
     )
