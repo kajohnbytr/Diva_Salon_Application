@@ -74,7 +74,7 @@ class Login : AppCompatActivity() {
             return
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Please enter a valid email", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Email is not valid.", Toast.LENGTH_LONG).show()
             return
         }
 
